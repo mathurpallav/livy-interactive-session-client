@@ -1,0 +1,33 @@
+name: Test
+on:
+  workflow_dispatch:
+    inputs:
+      sql_query:
+        description: 'Type query'
+        type: string
+      branch_name:
+        description: 'Type branch name'
+        type: string
+  
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name : New Branch
+        run : |
+          git checkout -b "${{github.event.inputs.branch_name}}"
+      - name : Do Work
+        run : |
+          mkdir -p test
+          touch test.sql
+      - name : Commit & Push
+        run : |
+          git add test/test.sql
+          git commit -m "Testing Actions"
+          git push origin "${{github.event.inputs.branch_name}}"
